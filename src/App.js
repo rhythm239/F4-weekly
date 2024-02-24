@@ -1,23 +1,45 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import TableRow from './TableRow';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [cryptoData, setCryptoData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+        const data = await response.json();
+        setCryptoData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="table-container">
+     
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Icon</th>
+            <th>Name</th>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Volume</th>
+            <th>Change</th>
+            <th>Mkt Cap</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cryptoData.map((crypto, index) => (
+            <TableRow key={index} data={crypto} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
